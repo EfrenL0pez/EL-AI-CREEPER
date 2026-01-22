@@ -12,10 +12,23 @@ if ! command -v docker &> /dev/null; then
     sudo usermod -aG docker $USER
     echo ""
     echo "Docker installed."
-    echo "Log out and log back in, then run this again:"
+    echo "Reboot your Pi, then run this again:"
     echo ""
+    echo "  sudo reboot"
+    echo ""
+    echo "After reboot:"
     echo "  curl -fsSL https://raw.githubusercontent.com/EfrenL0pez/EL-AI-CREEPER/main/install.sh | bash"
     echo ""
+    exit 0
+fi
+
+# Check if user is in docker group
+if ! groups | grep -q docker; then
+    echo "Docker installed but need to reboot first."
+    echo ""
+    echo "  sudo reboot"
+    echo ""
+    echo "After reboot, run this again."
     exit 0
 fi
 
