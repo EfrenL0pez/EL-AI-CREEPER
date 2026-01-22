@@ -33,5 +33,4 @@ fi
 
 # Start it up
 echo "Starting..."
-cd ros2_ws
 docker compose up --build
