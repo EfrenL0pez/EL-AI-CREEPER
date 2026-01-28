@@ -21,12 +21,12 @@ BOLD='\033[1m'
 print_header() {
     clear
     echo -e "${GREEN}"
-    echo "  ███████╗██╗          █████╗ ██╗     ██████╗██████╗ ███████╗███████╗██████╗ ███████╗██████╗ "
-    echo "  ██╔════╝██║         ██╔══██╗██║    ██╔════╝██╔══██╗██╔════╝██╔════╝██╔══██╗██╔════╝██╔══██╗"
-    echo "  █████╗  ██║         ███████║██║    ██║     ██████╔╝█████╗  █████╗  ██████╔╝█████╗  ██████╔╝"
-    echo "  ██╔══╝  ██║         ██╔══██║██║    ██║     ██╔══██╗██╔══╝  ██╔══╝  ██╔═══╝ ██╔══╝  ██╔══██╗"
-    echo "  ███████╗███████╗    ██║  ██║██║    ╚██████╗██║  ██║███████╗███████╗██║     ███████╗██║  ██║"
-    echo "  ╚══════╝╚══════╝    ╚═╝  ╚═╝╚═╝     ╚═════╝╚═╝  ╚═╝╚══════╝╚══════╝╚═╝     ╚══════╝╚═╝  ╚═╝"
+    echo "  ███████╗██╗          █████╗ ██╗      ██████╗██████╗ ███████╗███████╗██████╗ ███████╗██████╗ ██╗"
+    echo "  ██╔════╝██║         ██╔══██╗██║     ██╔════╝██╔══██╗██╔════╝██╔════╝██╔══██╗██╔════╝██╔══██╗██║"
+    echo "  █████╗  ██║         ███████║██║     ██║     ██████╔╝█████╗  █████╗  ██████╔╝█████╗  ██████╔╝██║"
+    echo "  ██╔══╝  ██║         ██╔══██║██║     ██║     ██╔══██╗██╔══╝  ██╔══╝  ██╔═══╝ ██╔══╝  ██╔══██╗╚═╝"
+    echo "  ███████╗███████╗    ██║  ██║██║     ╚██████╗██║  ██║███████╗███████╗██║     ███████╗██║  ██║██╗"
+    echo "  ╚══════╝╚══════╝    ╚═╝  ╚═╝╚═╝      ╚═════╝╚═╝  ╚═╝╚══════╝╚══════╝╚═╝     ╚══════╝╚═╝  ╚═╝╚═╝"
     echo -e "${NC}"
     echo -e "${CYAN}  Interactive Setup Guide${NC}"
     echo ""
@@ -62,13 +62,13 @@ print_tip() {
 wait_for_enter() {
     echo ""
     echo -e "${WHITE}  Press ${GREEN}[ENTER]${WHITE} to continue...${NC}"
-    read
+    read </dev/tty
 }
 
 ask_yes_no() {
     while true; do
         echo -ne "${WHITE}  $1 ${GREEN}[y/n]${WHITE}: ${NC}"
-        read -n 1 answer
+        read -n 1 answer </dev/tty
         echo ""
         case $answer in
             [Yy]* ) return 0;;
@@ -99,21 +99,11 @@ show_progress() {
 # =============================================================================
 welcome_screen() {
     print_header
-    echo -e "${WHITE}  Welcome to the El AI Creeper setup!${NC}"
+    echo -e "${WHITE}  Welcome! This guide will walk you through:${NC}"
+    echo -e "${WHITE}    1. Download code  2. Flash Yukon  3. Upload Yukon code${NC}"
+    echo -e "${WHITE}    4. Verify connection  5. Install Docker  6. Start robot${NC}"
     echo ""
-    echo -e "${CYAN}  This interactive guide will walk you through:${NC}"
-    echo ""
-    echo -e "${WHITE}    1. ${NC}Downloading the code"
-    echo -e "${WHITE}    2. ${NC}Flashing Yukon firmware"
-    echo -e "${WHITE}    3. ${NC}Uploading Yukon code"
-    echo -e "${WHITE}    4. ${NC}Verifying connections"
-    echo -e "${WHITE}    5. ${NC}Installing Docker"
-    echo -e "${WHITE}    6. ${NC}Starting the robot!"
-    echo ""
-    echo -e "${YELLOW}  Requirements:${NC}"
-    echo -e "${WHITE}    • Raspberry Pi (with internet)${NC}"
-    echo -e "${WHITE}    • Pimoroni Yukon${NC}"
-    echo -e "${WHITE}    • USB cable (Pi to Yukon)${NC}"
+    echo -e "${YELLOW}  Requirements:${NC} Raspberry Pi, Pimoroni Yukon, USB cable"
     echo ""
     print_tip "Take your time - each step will wait for you!"
     wait_for_enter
@@ -209,7 +199,7 @@ step_flash_firmware() {
         echo -e "${WHITE}    • Try a different USB port${NC}"
         echo ""
         echo -e "${WHITE}  Press ${GREEN}[ENTER]${WHITE} when ready to continue anyway...${NC}"
-        read
+        read </dev/tty
     fi
     wait_for_enter
 }
@@ -261,7 +251,7 @@ step_upload_code() {
         echo -e "${WHITE}    • Make sure you selected MicroPython interpreter${NC}"
         echo ""
         echo -e "${WHITE}  Press ${GREEN}[ENTER]${WHITE} when ready to continue anyway...${NC}"
-        read
+        read </dev/tty
     fi
     wait_for_enter
 }
@@ -432,7 +422,7 @@ if [ ! -f /proc/device-tree/model ] || ! grep -q "Raspberry Pi" /proc/device-tre
     echo -e "${WHITE}  This script is designed for Raspberry Pi.${NC}"
     echo ""
     echo -ne "  Continue anyway? [y/n]: "
-    read -n 1 answer
+    read -n 1 answer </dev/tty
     echo ""
     if [ "$answer" != "y" ]; then
         exit 0
