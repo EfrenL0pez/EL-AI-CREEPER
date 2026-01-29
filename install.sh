@@ -1,9 +1,8 @@
 #!/bin/bash
 # El AI Creeper - Setup & Run Script
 
-VERSION="1.0.0"
+VERSION="1.0.1"
 
-# Colors
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 CYAN='\033[0;36m'
@@ -33,34 +32,14 @@ check_docker_group() {
     groups | grep -q docker
 }
 
-check_container() {
+check_installed() {
     docker images 2>/dev/null | grep -q "el-ai-creeper"
 }
 
-# =============================================================================
-# INSTALL
-# =============================================================================
-do_install() {
-
-    # Download/update code
-    print_logo
-    echo -e "${WHITE}  Updating code from GitHub...${NC}"
-    cd ~
-    if [ -d "EL-AI-CREEPER" ]; then
-        cd EL-AI-CREEPER
-        git stash --quiet 2>/dev/null
-        git pull --quiet
-    else
-        git clone https://github.com/EfrenL0pez/EL-AI-CREEPER.git
-        cd EL-AI-CREEPER
-    fi
-    echo -e "${GREEN}  ✓ Code updated${NC}"
-    sleep 1
-
-    # Step 1: Yukon
+first_time_setup() {
     print_logo
     echo -e "${YELLOW}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-    echo -e "${WHITE}  STEP 1: YUKON SETUP${NC}"
+    echo -e "${WHITE}  YUKON SETUP${NC}"
     echo -e "${YELLOW}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
     echo ""
     echo -e "${CYAN}  Flash firmware (one time only):${NC}"
@@ -85,10 +64,9 @@ do_install() {
         esac
     done
 
-    # Step 2: Docker
     print_logo
     echo -e "${YELLOW}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-    echo -e "${WHITE}  STEP 2: DOCKER${NC}"
+    echo -e "${WHITE}  DOCKER${NC}"
     echo -e "${YELLOW}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
     echo ""
 
@@ -106,7 +84,6 @@ do_install() {
             case $answer in
                 y|Y) sudo reboot ;;
                 n|N) exit 0 ;;
-                *) echo -e "${RED}  Enter y or n${NC}" ;;
             esac
         done
     fi
@@ -120,47 +97,51 @@ do_install() {
             case $answer in
                 y|Y) sudo reboot ;;
                 n|N) exit 0 ;;
-                *) echo -e "${RED}  Enter y or n${NC}" ;;
             esac
         done
     fi
 
     echo -e "${GREEN}  ✓ Docker ready${NC}"
-    echo ""
+    do_update
+}
 
-    # Step 3: Build
+do_update() {
     print_logo
     echo -e "${YELLOW}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-    echo -e "${WHITE}  STEP 3: BUILD CONTAINER${NC}"
+    echo -e "${WHITE}  UPDATING${NC}"
     echo -e "${YELLOW}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
     echo ""
-    echo -e "${WHITE}  Building ROS2 container (takes a few minutes)...${NC}"
+    
+    echo -e "${WHITE}  Downloading latest code...${NC}"
+    cd ~/EL-AI-CREEPER
+    git stash --quiet 2>/dev/null
+    git pull --quiet
+    echo -e "${GREEN}  ✓ Code updated${NC}"
     echo ""
     
-    cd ~/EL-AI-CREEPER
+    echo -e "${WHITE}  Building container (takes a few minutes)...${NC}"
+    echo ""
+    
     if ! docker compose build; then
         echo ""
-        echo -e "${RED}  Build failed! Try:${NC}"
-        echo -e "${WHITE}    docker builder prune -f${NC}"
-        echo -e "${WHITE}    bash install.sh${NC}"
+        echo -e "${RED}  Build failed!${NC}"
+        echo -e "${WHITE}  Press ${GREEN}[ENTER]${WHITE}...${NC}"
+        read </dev/tty
         return 1
     fi
     
     echo ""
-    echo -e "${GREEN}  ✓ Build complete!${NC}"
+    echo -e "${GREEN}  ✓ Update complete!${NC}"
     echo ""
-    echo -e "${WHITE}  Press ${GREEN}[ENTER]${WHITE} to continue...${NC}"
+    echo -e "${WHITE}  Press ${GREEN}[ENTER]${WHITE}...${NC}"
     read </dev/tty
     return 0
 }
 
-# =============================================================================
-# RUN
-# =============================================================================
-do_run() {
+do_start() {
     print_logo
     echo -e "${YELLOW}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-    echo -e "${WHITE}  START ROBOT${NC}"
+    echo -e "${WHITE}  STARTING ROBOT${NC}"
     echo -e "${YELLOW}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
     echo ""
     echo -e "${CYAN}  Controls:${NC}"
@@ -168,7 +149,6 @@ do_run() {
     echo -e "${WHITE}    A = Left       D = Right${NC}"
     echo -e "${WHITE}    SPACE = Stop   Q = Quit${NC}"
     echo ""
-    echo -e "${WHITE}  Starting...${NC}"
     
     cd ~/EL-AI-CREEPER
     docker compose down 2>/dev/null
@@ -183,47 +163,55 @@ do_run() {
         source /root/ros2_ws/install/setup.bash
         ros2 run charged_creeper keyboard_node
     '
+    
+    echo ""
+    echo -e "${WHITE}  Stopping...${NC}"
+    docker compose down 2>/dev/null
+    echo -e "${GREEN}  ✓ Stopped${NC}"
+    sleep 1
 }
 
-# =============================================================================
-# MAIN MENU
-# =============================================================================
+do_exit() {
+    cd ~/EL-AI-CREEPER 2>/dev/null
+    docker compose down 2>/dev/null
+    echo -e "${GREEN}  Bye!${NC}"
+    exit 0
+}
+
 while true; do
     print_logo
-    echo -e "${WHITE}  What would you like to do?${NC}"
-    echo ""
-    echo -e "    ${GREEN}1${NC}) Install  ${WHITE}(first time setup)${NC}"
-    echo -e "    ${GREEN}2${NC}) Run      ${WHITE}(start robot)${NC}"
-    echo -e "    ${GREEN}3${NC}) Rebuild  ${WHITE}(rebuild container)${NC}"
-    echo -e "    ${GREEN}4${NC}) Exit${NC}"
-    echo ""
-    echo -ne "${WHITE}  Choice ${GREEN}[1-4]${WHITE}: ${NC}"
-    read -n 1 choice </dev/tty
-    echo ""
     
-    case $choice in
-        1) do_install ;;
-        2) 
-            if ! check_container; then
-                echo -e "${RED}  Not installed. Select 1 first.${NC}"
-                sleep 2
-            else
-                do_run
-            fi
-            ;;
-        3)
-            cd ~/EL-AI-CREEPER
-            docker compose build --no-cache
-            echo -e "${WHITE}  Press ${GREEN}[ENTER]${WHITE}...${NC}"
-            read </dev/tty
-            ;;
-        4)
-            echo -e "${GREEN}  Bye!${NC}"
-            exit 0
-            ;;
-        *) 
-            echo -e "${RED}  Invalid. Enter 1-4.${NC}"
-            sleep 1
-            ;;
-    esac
+    if ! check_installed; then
+        echo -e "${WHITE}  First time? Run Install first.${NC}"
+        echo ""
+        echo -e "    ${GREEN}1${NC}) Install${NC}"
+        echo -e "    ${GREEN}2${NC}) Exit${NC}"
+        echo ""
+        echo -ne "${WHITE}  Choice ${GREEN}[1-2]${WHITE}: ${NC}"
+        read -n 1 choice </dev/tty
+        echo ""
+        
+        case $choice in
+            1) first_time_setup ;;
+            2) do_exit ;;
+            *) echo -e "${RED}  Invalid.${NC}"; sleep 1 ;;
+        esac
+    else
+        echo -e "${WHITE}  What would you like to do?${NC}"
+        echo ""
+        echo -e "    ${GREEN}1${NC}) Start    ${WHITE}(run the robot)${NC}"
+        echo -e "    ${GREEN}2${NC}) Update   ${WHITE}(download latest code)${NC}"
+        echo -e "    ${GREEN}3${NC}) Exit${NC}"
+        echo ""
+        echo -ne "${WHITE}  Choice ${GREEN}[1-3]${WHITE}: ${NC}"
+        read -n 1 choice </dev/tty
+        echo ""
+        
+        case $choice in
+            1) do_start ;;
+            2) do_update ;;
+            3) do_exit ;;
+            *) echo -e "${RED}  Invalid.${NC}"; sleep 1 ;;
+        esac
+    fi
 done
