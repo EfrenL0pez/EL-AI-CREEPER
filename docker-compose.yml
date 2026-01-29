@@ -14,12 +14,12 @@ services:
     group_add:
       - dialout
     command: >
-      /bin/bash -lc "
-        source /opt/ros/kilted/setup.bash &&
-        cd /root/ros2_ws &&
-        colcon build &&
-        source /root/ros2_ws/install/setup.bash &&
+      /bin/bash -c '
+        source /opt/ros/kilted/setup.bash
+        cd /root/ros2_ws
+        colcon build
+        source /root/ros2_ws/install/setup.bash
         ros2 run charged_creeper communication_node &
-        sleep 2 &&
+        sleep 2
         ros2 run charged_creeper keyboard_node
-      "
+      '
