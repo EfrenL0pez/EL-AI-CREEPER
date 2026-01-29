@@ -2,24 +2,13 @@ services:
   ros2:
     build: .
     container_name: ros2_container
-    network_mode: "host"
     stdin_open: true
     tty: true
-    volumes:
-      - ./src:/root/ros2_ws/src
-      - /dev:/dev
     devices:
-      - "/dev/ttyACM0:/dev/ttyACM0"
-    privileged: true
-    group_add:
-      - dialout
+      - /dev/ttyACM0:/dev/ttyACM0
     command: >
-      /bin/bash -c '
-        source /opt/ros/kilted/setup.bash
-        cd /root/ros2_ws
-        colcon build
-        source /root/ros2_ws/install/setup.bash
-        ros2 run charged_creeper communication_node &
-        sleep 2
-        ros2 run charged_creeper keyboard_node
-      '
+      /bin/bash -c "
+        source /opt/ros/kilted/setup.bash &&
+        source /root/ros2_ws/install/setup.bash &&
+        ros2 run charged_creeper communication_node
+      "
