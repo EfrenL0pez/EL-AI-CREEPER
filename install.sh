@@ -41,6 +41,22 @@ check_container() {
 # INSTALL
 # =============================================================================
 do_install() {
+
+    # Download/update code
+    print_logo
+    echo -e "${WHITE}  Updating code from GitHub...${NC}"
+    cd ~
+    if [ -d "EL-AI-CREEPER" ]; then
+        cd EL-AI-CREEPER
+        git stash --quiet 2>/dev/null
+        git pull --quiet
+    else
+        git clone https://github.com/EfrenL0pez/EL-AI-CREEPER.git
+        cd EL-AI-CREEPER
+    fi
+    echo -e "${GREEN}  ✓ Code updated${NC}"
+    sleep 1
+
     # Step 1: Yukon
     print_logo
     echo -e "${YELLOW}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
