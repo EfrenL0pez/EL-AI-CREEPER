@@ -19,8 +19,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'communication_node = charged_creeper.communication_node:main',
-            'keyboard_node = charged_creeper.keyboard_node:main',
+            'communication_node = nodes.communication_node:main',
+            'keyboard_node = nodes.keyboard_node:main',
         ],
     },
 )
