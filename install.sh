@@ -1,7 +1,7 @@
 #!/bin/bash
 # El AI Creeper - Setup & Run Script
 
-VERSION="1.0.1"
+VERSION="1.0.0"
 
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
@@ -9,6 +9,13 @@ CYAN='\033[0;36m'
 WHITE='\033[1;37m'
 RED='\033[0;31m'
 NC='\033[0m'
+
+# Clone repo if not exists
+if [ ! -d ~/EL-AI-CREEPER ]; then
+    echo -e "Downloading El AI Creeper..."
+    git clone --quiet https://github.com/EfrenL0pez/EL-AI-CREEPER.git ~/EL-AI-CREEPER
+fi
+cd ~/EL-AI-CREEPER
 
 print_logo() {
     clear
