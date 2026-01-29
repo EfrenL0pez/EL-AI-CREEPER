@@ -7,7 +7,8 @@ package_name = 'charged_creeper'
 setup(
     name=package_name,
     version='1.0.0',
-    packages=['nodes'],
+    packages=[package_name],
+    package_dir={package_name: 'nodes'},
     data_files=[
         ('share/ament_index/resource_index/packages',
             ['resource/' + package_name]),
@@ -17,15 +18,15 @@ setup(
     ],
     install_requires=['setuptools'],
     zip_safe=True,
-    maintainer='Your Name',
-    maintainer_email='your@email.com',
-    description='ROS2 package for controlling a robot with keyboard input',
+    maintainer='Efren Lopez',
+    maintainer_email='efren@example.com',
+    description='El AI Creeper robot control',
     license='MIT',
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'keyboard_node = nodes.keyboard_node:main',
-            'communication_node = nodes.communication_node:main',
+            'keyboard_node = charged_creeper.keyboard_node:main',
+            'communication_node = charged_creeper.communication_node:main',
         ],
     },
 )
